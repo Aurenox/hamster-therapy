@@ -33,6 +33,64 @@ const trollingMessages: Record<number, string> = {
 
 const FRAME_DURATION = 2000;
 
+const stageInfo = {
+  1: {
+    emoji: "🥱",
+    title: "The Yawn",
+    subtitle: "Release facial tension",
+    technique: "Vagus Nerve Decompression",
+    description:
+      "Open your jaw slowly and comfortably. Let the tension melt away.",
+    malayalam: "ഇതൊരു കൊട്ടാവയാണോ?",
+    instruction:
+      "താടി തറയിൽ മുട്ടുന്നതുപോലെ താഴോട്ട് വിടൂ ഷാജീ!",
+    calibrationLabel: "Mouth Calibration",
+    target: "Target: > 0.050",
+  },
+
+  2: {
+    emoji: "😴",
+    title: "Droopy Daze",
+    subtitle: "Let your eyes get heavy",
+    technique: "Orbicularis Oculi Relaxation",
+    description:
+      "Slowly relax your eyes and allow them to become heavy and sleepy.",
+    malayalam: "കണ്ണുകൾക്ക് ഉറക്കം വരുന്നുണ്ടോ?",
+    instruction:
+      "പതുക്കെ കണ്ണുകൾ അടച്ച് ക്ഷീണിച്ച പോലെ ഇരിക്കൂ ഷാജീ!",
+    calibrationLabel: "Eye Calibration",
+    target: "Target: < 0.022",
+  },
+
+  3: {
+    emoji: "😗",
+    title: "Zen Pout",
+    subtitle: "Relax your facial muscles",
+    technique: "Facial Relaxation",
+    description:
+      "Bring your lips gently together into a tiny relaxed pout.",
+    malayalam: "ഒരു ചെറിയ Zen pout ചെയ്യൂ 😗",
+    instruction:
+      "ചുണ്ട് ചെറുതായി മുന്നോട്ട് തള്ളിക്കൊണ്ട് ഇരിക്കൂ ഷാജീ!",
+    calibrationLabel: "Pout Calibration",
+    target: "Target: < 0.320",
+  },
+
+  4: {
+    emoji: "🫠",
+    title: "Coma",
+    subtitle: "Enter maximum relaxation",
+    technique: "Deep Facial Relaxation",
+    description:
+      "Close your eyes completely while keeping your mouth relaxed and open.",
+    malayalam: "ഉറങ്ങിപ്പോയ പോലെ ഇരിക്കൂ... 😴",
+    instruction:
+      "കണ്ണുകൾ അടയ്ക്കൂ, വായ തുറന്നുതന്നെ വെക്കൂ ഷാജീ!",
+    calibrationLabel: "Coma Calibration",
+    target: "Eyes < 0.012 • Mouth > 0.070",
+  },
+} as const;
+
 export default function TherapyStage() {
   // ============================================================
   // REFS
@@ -684,8 +742,6 @@ export default function TherapyStage() {
     setStatus("Deep Sleeping...");
 
     console.log("😴 DEEP SLEEPING");
-
-    // No beep yet.
 
     deepSleepTimerRef.current =
       window.setTimeout(() => {
@@ -1407,14 +1463,16 @@ export default function TherapyStage() {
     }
 
     try {
-      const canvas = document.createElement(
-        "canvas",
-      );
+      const canvas =
+        document.createElement(
+          "canvas",
+        );
 
       canvas.width = 1280;
       canvas.height = 720;
 
-      const ctx = canvas.getContext("2d");
+      const ctx =
+        canvas.getContext("2d");
 
       if (!ctx) {
         throw new Error(
@@ -1433,13 +1491,17 @@ export default function TherapyStage() {
 
       const mimeType =
         mimeTypes.find((type) =>
-          MediaRecorder.isTypeSupported(type),
+          MediaRecorder.isTypeSupported(
+            type,
+          ),
         ) || "";
 
       if (!mimeType) {
         stream
           .getTracks()
-          .forEach((track) => track.stop());
+          .forEach((track) =>
+            track.stop(),
+          );
 
         throw new Error(
           "This browser cannot create a WebM video.",
@@ -1454,19 +1516,22 @@ export default function TherapyStage() {
 
       const chunks: BlobPart[] = [];
 
-      recorder.ondataavailable = (event) => {
+      recorder.ondataavailable = (
+        event,
+      ) => {
         if (event.data.size > 0) {
           chunks.push(event.data);
         }
       };
 
-      const stopped = new Promise<void>(
-        (resolve) => {
-          recorder.onstop = () => {
-            resolve();
-          };
-        },
-      );
+      const stopped =
+        new Promise<void>(
+          (resolve) => {
+            recorder.onstop = () => {
+              resolve();
+            };
+          },
+        );
 
       recorder.start(250);
 
@@ -1483,8 +1548,10 @@ export default function TherapyStage() {
         );
 
         const scale = Math.min(
-          canvas.width / image.naturalWidth,
-          canvas.height / image.naturalHeight,
+          canvas.width /
+            image.naturalWidth,
+          canvas.height /
+            image.naturalHeight,
         );
 
         const width =
@@ -1494,10 +1561,12 @@ export default function TherapyStage() {
           image.naturalHeight * scale;
 
         const x =
-          (canvas.width - width) / 2;
+          (canvas.width - width) /
+          2;
 
         const y =
-          (canvas.height - height) / 2;
+          (canvas.height - height) /
+          2;
 
         ctx.drawImage(
           image,
@@ -1515,7 +1584,8 @@ export default function TherapyStage() {
 
         await new Promise<void>(
           (resolve, reject) => {
-            image.onload = () => resolve();
+            image.onload = () =>
+              resolve();
 
             image.onerror = () =>
               reject(
@@ -1530,15 +1600,16 @@ export default function TherapyStage() {
           performance.now();
 
         while (
-          performance.now() - startTime <
+          performance.now() -
+            startTime <
           FRAME_DURATION
         ) {
           drawFrame(image);
 
           await new Promise<void>(
             (resolve) => {
-              requestAnimationFrame(() =>
-                resolve(),
+              requestAnimationFrame(
+                () => resolve(),
               );
             },
           );
@@ -1551,11 +1622,16 @@ export default function TherapyStage() {
 
       stream
         .getTracks()
-        .forEach((track) => track.stop());
+        .forEach((track) =>
+          track.stop(),
+        );
 
-      const blob = new Blob(chunks, {
-        type: mimeType,
-      });
+      const blob = new Blob(
+        chunks,
+        {
+          type: mimeType,
+        },
+      );
 
       const url =
         URL.createObjectURL(blob);
@@ -1583,238 +1659,511 @@ export default function TherapyStage() {
     }
   }
 
-  // ============================================================
-  // IMAGE SIZE
-  // ============================================================
-
   const imageClass =
     imageSize === "small"
       ? "max-h-56"
       : imageSize === "large"
         ? "max-h-[600px]"
         : "max-h-[400px]";
-
   // ============================================================
-  // STAGE SCREEN
+  // THERAPY SCREEN
   // ============================================================
 
   function renderTherapy() {
-    return (
-      <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-2xl text-center">
+    const info = stageInfo[stage];
 
-          <div className="text-7xl mb-6">
+    const capturedForStage =
+      stage === 1
+        ? frame1Captured
+        : stage === 2
+          ? frame2Captured
+          : stage === 3
+            ? frame3Captured
+            : frame4Captured;
+
+    const progressPercent =
+      Math.max(
+        3,
+        Math.min(100, calibration * 100),
+      );
+
+    return (
+      <main className="relative min-h-screen overflow-hidden bg-[#fffaf5] text-slate-900">
+
+        {/* BACKGROUND */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-40 -top-40 h-[420px] w-[420px] rounded-full bg-pink-200/40 blur-3xl" />
+
+          <div className="absolute -right-40 top-10 h-[450px] w-[450px] rounded-full bg-purple-200/40 blur-3xl" />
+
+          <div className="absolute bottom-[-180px] left-[25%] h-[500px] w-[500px] rounded-full bg-orange-200/30 blur-3xl" />
+
+          <div className="absolute left-[8%] top-[28%] text-4xl opacity-20">
+            ✨
+          </div>
+
+          <div className="absolute right-[8%] top-[42%] text-5xl opacity-15">
             🐹
           </div>
 
-          <p className="text-emerald-400 text-sm uppercase tracking-[0.3em]">
-            Stage {stage} / 4
-          </p>
-
-          {stage === 1 && (
-            <>
-              <h1 className="text-5xl font-bold mt-4">
-                🥱 The Yawn
-              </h1>
-
-              <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                <p className="text-emerald-300 text-lg">
-                  Vagus Nerve Decompression
-                </p>
-
-                <p className="text-slate-400 mt-3">
-                  Expand your jaw vertically
-                  to release facial tension.
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <p className="text-xl">
-                  ഇതൊരു കൊട്ടാവയാണോ?
-                </p>
-
-                <p className="text-slate-400 mt-2">
-                  താടി തറയിൽ മുട്ടുന്നതുപോലെ
-                  താഴോട്ട് വിടൂ ഷാജീ!
-                </p>
-              </div>
-
-              <Calibration
-                label="Mouth Calibration"
-                value={calibration.toFixed(3)}
-                target="Target: > 0.050"
-                captured={frame1Captured}
-                frame={1}
-              />
-            </>
-          )}
-
-          {stage === 2 && (
-            <>
-              <h1 className="text-5xl font-bold mt-4">
-                😴 Droopy Daze
-              </h1>
-
-              <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                <p className="text-emerald-300 text-lg">
-                  Orbicularis Oculi Relaxation
-                </p>
-
-                <p className="text-slate-400 mt-3">
-                  Slowly let your eyes become
-                  heavy and sleepy.
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <p className="text-xl">
-                  കണ്ണുകൾക്ക് ഉറക്കം വരുന്നുണ്ടോ?
-                </p>
-
-                <p className="text-slate-400 mt-2">
-                  പതുക്കെ കണ്ണുകൾ അടച്ച്
-                  ക്ഷീണിച്ച പോലെ ഇരിക്കൂ ഷാജീ!
-                </p>
-              </div>
-
-              <Calibration
-                label="Eye Calibration"
-                value={calibration.toFixed(3)}
-                target="Target: < 0.022"
-                captured={frame2Captured}
-                frame={2}
-              />
-            </>
-          )}
-
-          {stage === 3 && (
-            <>
-              <h1 className="text-5xl font-bold mt-4">
-                😗 Zen Pout
-              </h1>
-
-              <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                <p className="text-emerald-300 text-lg">
-                  Facial Relaxation
-                </p>
-
-                <p className="text-slate-400 mt-3">
-                  Bring your lips together
-                  into a tiny relaxed pout.
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <p className="text-xl">
-                  ഒരു ചെറിയ Zen pout ചെയ്യൂ 😗
-                </p>
-
-                <p className="text-slate-400 mt-2">
-                  ചുണ്ട് ചെറുതായി മുന്നോട്ട്
-                  തള്ളിക്കൊണ്ട് ഇരിക്കൂ ഷാജീ!
-                </p>
-              </div>
-
-              <Calibration
-                label="Pout Calibration"
-                value={calibration.toFixed(3)}
-                target="Target: < 0.320"
-                captured={frame3Captured}
-                frame={3}
-              />
-            </>
-          )}
-
-          {stage === 4 && (
-            <>
-              <h1 className="text-5xl font-bold mt-4">
-                🫠 Coma
-              </h1>
-
-              <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                <p className="text-emerald-300 text-lg">
-                  Deep Facial Relaxation
-                </p>
-
-                <p className="text-slate-400 mt-3">
-                  Close your eyes completely
-                  while keeping your mouth open.
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <p className="text-xl">
-                  ഉറങ്ങിപ്പോയ പോലെ ഇരിക്കൂ... 😴
-                </p>
-
-                <p className="text-slate-400 mt-2">
-                  കണ്ണുകൾ അടയ്ക്കൂ,
-                  വായ തുറന്നുതന്നെ വെക്കൂ ഷാജീ!
-                </p>
-              </div>
-
-              <Calibration
-                label="Coma Calibration"
-                value={`${(
-                  calibration * 100
-                ).toFixed(0)}%`}
-                target="Eyes < 0.012 • Mouth > 0.070"
-                captured={frame4Captured}
-                frame={4}
-              />
-            </>
-          )}
-
-          <div className="mt-10">
-            <p>
-              <span
-                className={`inline-block w-3 h-3 rounded-full mr-2 ${
-                  cameraReady
-                    ? "bg-emerald-400"
-                    : "bg-red-500"
-                }`}
-              />
-
-              {cameraReady
-                ? "Camera active • Preview hidden"
-                : "Camera inactive"}
-            </p>
-
-            <p className="text-slate-500 mt-3">
-              {status}
-            </p>
+          <div className="absolute bottom-[15%] right-[15%] text-4xl opacity-15">
+            ⭐
           </div>
+        </div>
 
-          <div className="mt-6">
-            <p
-              className={
-                faceDetected
-                  ? "text-emerald-400"
-                  : "text-slate-500"
-              }
-            >
-              {faceDetected
-                ? "🟢 Face detected"
-                : "⚪ Looking for your face..."}
-            </p>
-          </div>
+        <div className="relative mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
 
-          {error && (
-            <div className="mt-8 rounded-xl bg-red-950 border border-red-800 p-4 text-red-300">
-              <p className="font-semibold">
-                Camera / Face Detection Error
-              </p>
+          {/* ==================================================
+              HEADER
+          ================================================== */}
 
-              <p className="mt-2 text-sm">
-                {error}
-              </p>
+          <header className="mb-7 flex items-center justify-between">
+
+            <div className="flex items-center gap-3">
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-3xl shadow-lg ring-1 ring-black/5">
+                🐹
+              </div>
+
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
+                  Hamster Therapy
+                </p>
+
+                <p className="mt-0.5 text-sm font-black text-slate-800">
+                  Facial Relaxation Lab
+                </p>
+              </div>
+
             </div>
-          )}
 
-          <p className="mt-10 text-xs text-slate-600">
-            Camera processing happens locally
-            in your browser.
-          </p>
+            <div className="hidden items-center gap-2 rounded-full border border-white bg-white/80 px-4 py-2.5 text-xs font-bold text-slate-500 shadow-sm backdrop-blur sm:flex">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+              Private & Local
+            </div>
+
+          </header>
+
+          {/* ==================================================
+              PROGRESS CARD
+          ================================================== */}
+
+          <section className="mb-6 rounded-[2rem] border border-white bg-white/80 p-5 shadow-xl shadow-slate-200/50 backdrop-blur-xl sm:p-6">
+
+            <div className="mb-5 flex items-center justify-between">
+
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">
+                  Your Journey
+                </p>
+
+                <p className="mt-1 text-sm font-black text-slate-800">
+                  Relaxation Progress
+                </p>
+              </div>
+
+              <div className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">
+                {stage} / 4
+              </div>
+
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+
+              {[1, 2, 3, 4].map((step) => {
+
+                const completed = step < stage;
+                const active = step === stage;
+
+                return (
+                  <div
+                    key={step}
+                    className="flex flex-1 items-center gap-2"
+                  >
+
+                    <div
+                      className={`
+                        relative flex h-10 w-10 shrink-0
+                        items-center justify-center rounded-full
+                        text-xs font-black transition-all duration-500
+                        ${
+                          completed
+                            ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200"
+                            : active
+                              ? "scale-110 bg-slate-950 text-white shadow-xl"
+                              : "bg-slate-100 text-slate-400"
+                        }
+                      `}
+                    >
+                      {completed ? "✓" : step}
+
+                      {active && (
+                        <span className="absolute inset-0 animate-ping rounded-full bg-slate-900/20" />
+                      )}
+                    </div>
+
+                    {step !== 4 && (
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className={`h-full rounded-full transition-all duration-700 ${
+                            completed
+                              ? "w-full bg-emerald-500"
+                              : "w-0"
+                          }`}
+                        />
+                      </div>
+                    )}
+
+                  </div>
+                );
+              })}
+
+            </div>
+
+            <div className="mt-4 grid grid-cols-4 text-center text-[9px] font-black uppercase tracking-wider text-slate-400 sm:text-[10px]">
+
+              <span
+                className={
+                  stage >= 1
+                    ? "text-slate-800"
+                    : ""
+                }
+              >
+                Yawn
+              </span>
+
+              <span
+                className={
+                  stage >= 2
+                    ? "text-slate-800"
+                    : ""
+                }
+              >
+                Daze
+              </span>
+
+              <span
+                className={
+                  stage >= 3
+                    ? "text-slate-800"
+                    : ""
+                }
+              >
+                Zen
+              </span>
+
+              <span
+                className={
+                  stage >= 4
+                    ? "text-slate-800"
+                    : ""
+                }
+              >
+                Coma
+              </span>
+
+            </div>
+
+          </section>
+
+          {/* ==================================================
+              MAIN CARD
+          ================================================== */}
+
+          <section className="overflow-hidden rounded-[2.25rem] border border-white bg-white shadow-2xl shadow-slate-300/40">
+
+            {/* GRADIENT TOP */}
+            <div className="h-2 w-full bg-gradient-to-r from-pink-400 via-purple-500 to-orange-300" />
+
+            <div className="p-5 sm:p-8 md:p-12">
+
+              {/* TOP STATUS */}
+
+              <div className="flex items-center justify-between gap-3">
+
+                <div className="rounded-full bg-slate-100 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  Stage {stage}
+                </div>
+
+                {faceDetected ? (
+                  <div className="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-[10px] font-black uppercase tracking-wider text-emerald-600">
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                    Face detected
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    <span className="h-2 w-2 rounded-full bg-slate-300" />
+                    Finding face
+                  </div>
+                )}
+
+              </div>
+
+              {/* ==================================================
+                  HERO
+              ================================================== */}
+
+              <div className="mx-auto mt-9 max-w-3xl text-center">
+
+                <div className="relative mx-auto w-fit">
+
+                  <div className="absolute inset-0 scale-110 rounded-[2rem] bg-gradient-to-br from-pink-200 via-purple-200 to-orange-100 opacity-60 blur-xl" />
+
+                  <div className="relative flex h-28 w-28 items-center justify-center rounded-[2rem] border border-white bg-gradient-to-br from-pink-100 via-purple-100 to-orange-100 text-7xl shadow-xl sm:h-36 sm:w-36 sm:text-8xl">
+                    {info.emoji}
+                  </div>
+
+                </div>
+
+                <p className="mt-7 text-[10px] font-black uppercase tracking-[0.32em] text-purple-500">
+                  {info.technique}
+                </p>
+
+                <h1 className="mt-3 text-5xl font-black tracking-[-0.04em] text-slate-950 sm:text-6xl md:text-7xl">
+                  {info.title}
+                </h1>
+
+                <p className="mt-3 text-base font-medium text-slate-400 sm:text-lg">
+                  {info.subtitle}
+                </p>
+
+              </div>
+
+              {/* ==================================================
+                  INSTRUCTION GRID
+              ================================================== */}
+
+              <div className="mx-auto mt-10 grid max-w-4xl gap-5 md:grid-cols-2">
+
+                {/* SCIENCE CARD */}
+
+                <div className="group rounded-[1.75rem] bg-slate-950 p-6 text-white shadow-xl transition-transform duration-300 hover:-translate-y-1">
+
+                  <div className="flex items-center gap-3">
+
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-xl">
+                      🧠
+                    </div>
+
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-[0.22em] text-slate-500">
+                        Therapy Method
+                      </p>
+
+                      <p className="mt-1 text-sm font-black">
+                        {info.technique}
+                      </p>
+                    </div>
+
+                  </div>
+
+                  <p className="mt-5 text-sm leading-7 text-slate-300">
+                    {info.description}
+                  </p>
+
+                </div>
+
+                {/* HAMSTER CARD */}
+
+                <div className="group rounded-[1.75rem] border border-amber-100 bg-gradient-to-br from-amber-50 via-orange-50 to-pink-50 p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1">
+
+                  <div className="flex items-center gap-3">
+
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-xl shadow-sm">
+                      🐹
+                    </div>
+
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-[0.22em] text-amber-500">
+                        Hamster Says
+                      </p>
+
+                      <p className="mt-1 text-sm font-black text-slate-800">
+                        ഇപ്പോൾ ചെയ്യേണ്ടത്
+                      </p>
+                    </div>
+
+                  </div>
+
+                  <p className="mt-5 text-lg font-black leading-8 text-slate-900">
+                    {info.malayalam}
+                  </p>
+
+                  <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
+                    {info.instruction}
+                  </p>
+
+                </div>
+
+              </div>
+
+              {/* ==================================================
+                  CALIBRATION
+              ================================================== */}
+
+              <div className="mx-auto mt-5 max-w-4xl rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 sm:p-7">
+
+                <div className="flex items-start justify-between gap-4">
+
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">
+                      {info.calibrationLabel}
+                    </p>
+
+                    <p className="mt-2 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
+                      {stage === 4
+                        ? `${(
+                            calibration * 100
+                          ).toFixed(0)}%`
+                        : calibration.toFixed(3)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-white bg-white px-4 py-3 text-right shadow-sm">
+
+                    <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
+                      Target
+                    </p>
+
+                    <p className="mt-1 text-xs font-black text-slate-600">
+                      {info.target}
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div className="mt-7 h-4 overflow-hidden rounded-full bg-slate-200 p-0.5">
+
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500 transition-all duration-300"
+                    style={{
+                      width: `${progressPercent}%`,
+                    }}
+                  />
+
+                </div>
+
+                <div className="mt-3 flex justify-between text-[9px] font-black uppercase tracking-wider text-slate-400">
+                  <span>Start</span>
+                  <span>Relax</span>
+                  <span>Target</span>
+                </div>
+
+                {capturedForStage && (
+                  <div className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-black text-emerald-600">
+                    <span>✓</span>
+                    Frame {stage} captured successfully
+                  </div>
+                )}
+
+              </div>
+
+              {/* ==================================================
+                  SYSTEM STATUS
+              ================================================== */}
+
+              <div className="mx-auto mt-5 max-w-4xl rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+
+                <div className="flex items-center gap-3">
+
+                  <div
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                      cameraReady
+                        ? "bg-emerald-50 text-emerald-500"
+                        : "bg-red-50 text-red-500"
+                    }`}
+                  >
+                    {cameraReady ? "✓" : "!"}
+                  </div>
+
+                  {/* <div className="min-w-0 flex-1">
+
+                    <div className="flex items-center justify-between gap-3">
+
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        System Status
+                      </p>
+
+                      <span
+                        className={`text-[9px] font-black uppercase tracking-wider ${
+                          cameraReady
+                            ? "text-emerald-500"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {cameraReady
+                          ? "Online"
+                          : "Offline"}
+                      </span>
+
+                    </div>
+
+                    <p className="mt-1 truncate text-sm font-bold text-slate-700">
+                      {cameraReady
+                        ? "Camera active • Preview hidden"
+                        : "Camera inactive"}
+                    </p>
+
+                  </div> */}
+
+                </div>
+
+                <div className="mt-4 border-t border-slate-100 pt-4">
+
+                  <p className="text-xs leading-6 text-slate-400">
+                    {status}
+                  </p>
+
+                </div>
+
+              </div>
+
+              {/* ==================================================
+                  ERROR
+              ================================================== */}
+
+              {error && (
+                <div className="mx-auto mt-5 max-w-4xl rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
+
+                  <div className="flex gap-4">
+
+                    <div className="text-2xl">
+                      ⚠️
+                    </div>
+
+                    <div>
+                      <p className="font-black">
+                        Camera / Face Detection Error
+                      </p>
+
+                      <p className="mt-2 text-sm leading-6">
+                        {error}
+                      </p>
+                    </div>
+
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+          </section>
+
+          {/* ==================================================
+              PRIVACY FOOTER
+          ================================================== */}
+
+          <div className="mt-6 flex justify-center">
+
+            <div className="flex items-center gap-2 rounded-full border border-white bg-white/70 px-5 py-3 text-[10px] font-bold text-slate-400 shadow-sm backdrop-blur">
+              🔒 Processing happens locally
+              <span className="text-slate-300">•</span>
+              Camera preview stays hidden
+            </div>
+
+          </div>
+
         </div>
       </main>
     );
@@ -1825,25 +2174,82 @@ export default function TherapyStage() {
   // ============================================================
 
   function renderCountdown() {
+    const progress =
+      ((5 - countdown) / 4) * 100;
+
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
+      <main className="relative min-h-screen overflow-hidden bg-[#100d18] text-white">
 
-          <div className="text-8xl mb-8">
-            🐹💤
+        <div className="absolute inset-0">
+          <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-600/20 blur-[100px]" />
+
+          <div className="absolute left-10 top-10 text-4xl opacity-20">
+            ✨
           </div>
 
-          <p className="text-slate-500 uppercase tracking-[0.5em] text-sm">
-            Hamster Going To Sleep
-          </p>
-
-          <div className="text-[12rem] md:text-[16rem] leading-none font-black mt-6">
-            {countdown}
+          <div className="absolute right-10 top-24 text-5xl opacity-20">
+            🌙
           </div>
 
-          <p className="text-slate-500 text-xl mt-8">
-            Good night...
-          </p>
+          <div className="absolute bottom-16 left-12 text-4xl opacity-20">
+            ⭐
+          </div>
+        </div>
+
+        <div className="relative flex min-h-screen items-center justify-center px-6">
+
+          <div className="w-full max-w-xl text-center">
+
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] border border-white/10 bg-white/5 text-6xl shadow-2xl backdrop-blur-xl">
+              🐹
+            </div>
+
+            <p className="mt-8 text-[10px] font-black uppercase tracking-[0.45em] text-purple-300">
+              Therapy Complete
+            </p>
+
+            <h1 className="mt-4 text-3xl font-black sm:text-5xl">
+              Hamster is going to sleep
+            </h1>
+
+            <p className="mt-3 text-sm text-slate-500">
+              Prepare yourself for deep relaxation.
+            </p>
+
+            <div className="relative mx-auto mt-10 flex h-64 w-64 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] shadow-2xl">
+
+              <div className="absolute inset-4 rounded-full border border-purple-400/20" />
+
+              <div className="absolute inset-8 rounded-full border border-purple-400/10" />
+
+              <div className="text-[9rem] font-black leading-none tracking-[-0.08em] text-white">
+                {countdown}
+              </div>
+
+            </div>
+
+            <div className="mx-auto mt-10 h-2 max-w-sm overflow-hidden rounded-full bg-white/10">
+
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-400 to-pink-400 transition-all duration-700"
+                style={{
+                  width: `${Math.max(
+                    8,
+                    progress,
+                  )}%`,
+                }}
+              />
+
+            </div>
+
+            <div className="mt-5 flex items-center justify-center gap-2 text-sm font-medium text-slate-500">
+              <span>😴</span>
+              <span>Good night...</span>
+              <span>💤</span>
+            </div>
+
+          </div>
+
         </div>
       </main>
     );
@@ -1855,24 +2261,62 @@ export default function TherapyStage() {
 
   function renderDeepSleep() {
     return (
-      <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <div className="text-center">
+      <main className="relative min-h-screen overflow-hidden bg-[#090812] text-white">
 
-          <div className="text-[10rem] animate-pulse">
-            🐹💤
+        <div className="absolute inset-0">
+
+          <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-[120px]" />
+
+          <div className="absolute left-[12%] top-[18%] text-3xl opacity-20">
+            ✦
           </div>
 
-          <p className="text-emerald-400 uppercase tracking-[0.4em] text-sm mt-8">
-            Sleep Mode
-          </p>
+          <div className="absolute right-[15%] top-[28%] text-4xl opacity-20">
+            ✧
+          </div>
 
-          <h1 className="text-5xl md:text-7xl font-black mt-5">
-            😴 Deep Sleeping...
-          </h1>
+          <div className="absolute bottom-[20%] left-[20%] text-3xl opacity-15">
+            ⭐
+          </div>
 
-          <p className="text-slate-500 text-lg mt-6">
-            Everything is peaceful...
-          </p>
+        </div>
+
+        <div className="relative flex min-h-screen items-center justify-center px-6">
+
+          <div className="text-center">
+
+            <div className="relative mx-auto flex h-40 w-40 items-center justify-center rounded-full bg-white/[0.03] shadow-2xl">
+
+              <div className="absolute inset-0 animate-ping rounded-full border border-indigo-400/10" />
+
+              <div className="text-8xl animate-pulse">
+                🐹💤
+              </div>
+
+            </div>
+
+            <p className="mt-10 text-[10px] font-black uppercase tracking-[0.5em] text-indigo-300">
+              Sleep Mode
+            </p>
+
+            <h1 className="mt-5 text-5xl font-black tracking-tight sm:text-7xl">
+              Deep Sleeping
+              <span className="animate-pulse">...</span>
+            </h1>
+
+            <p className="mx-auto mt-5 max-w-md text-base leading-7 text-slate-500">
+              Everything is peaceful.
+              <br />
+              Let the hamster sleep.
+            </p>
+
+            <div className="mx-auto mt-8 flex w-fit items-center gap-2 rounded-full border border-white/5 bg-white/[0.03] px-5 py-3 text-xs font-bold text-slate-500">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-400" />
+              Relaxation in progress
+            </div>
+
+          </div>
+
         </div>
       </main>
     );
@@ -1883,157 +2327,287 @@ export default function TherapyStage() {
   // ============================================================
 
   function renderShockCheck() {
+    const progress =
+      ((3 - shockTimeLeft) / 3) * 100;
+
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center px-6">
+      <main className="relative min-h-screen overflow-hidden bg-[#090608] text-white">
 
-          <div className="text-8xl animate-pulse">
-            🐹
+        <div className="absolute inset-0">
+
+          <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600/10 blur-[120px]" />
+
+          <div className="absolute left-10 top-20 text-4xl opacity-20">
+            ⚡
           </div>
 
-          <p className="text-red-500 uppercase tracking-[0.4em] text-sm mt-8">
-            ⚡ Shock Detection Starts
-          </p>
-
-          <div className="text-[10rem] font-black leading-none mt-5">
-            {shockTimeLeft}
+          <div className="absolute right-10 top-32 text-4xl opacity-20">
+            ⚡
           </div>
 
-          <p className="text-xl text-slate-400 mt-5">
-            Stay still...
-          </p>
+        </div>
 
-          <div className="mt-8 h-2 w-64 mx-auto rounded-full bg-slate-800 overflow-hidden">
-            <div
-              className="h-full bg-red-500 transition-all duration-1000"
-              style={{
-                width: `${
-                  (shockTimeLeft / 3) *
-                  100
-                }%`,
-              }}
-            />
+        <div className="relative flex min-h-screen items-center justify-center px-6">
+
+          <div className="w-full max-w-xl text-center">
+
+            <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-[2rem] border border-red-500/20 bg-red-500/5 text-7xl shadow-2xl">
+              🐹
+            </div>
+
+            <div className="mt-9">
+
+              <p className="text-[10px] font-black uppercase tracking-[0.45em] text-red-500">
+                ⚡ Final Test
+              </p>
+
+              <h1 className="mt-4 text-4xl font-black sm:text-6xl">
+                Shock Detection
+              </h1>
+
+              <p className="mt-3 text-sm text-slate-500">
+                Stay still... we're watching 👀
+              </p>
+
+            </div>
+
+            <div className="relative mx-auto mt-10 flex h-60 w-60 items-center justify-center rounded-full border border-red-500/10 bg-red-500/[0.03]">
+
+              <div className="absolute inset-4 rounded-full border border-red-500/10" />
+
+              <div className="absolute inset-10 rounded-full border border-red-500/10" />
+
+              <div className="text-[9rem] font-black leading-none text-white">
+                {shockTimeLeft}
+              </div>
+
+            </div>
+
+            <div className="mx-auto mt-9 h-2 max-w-sm overflow-hidden rounded-full bg-white/10">
+
+              <div
+                className="h-full rounded-full bg-red-500 transition-all duration-1000"
+                style={{
+                  width: `${Math.max(
+                    8,
+                    progress,
+                  )}%`,
+                }}
+              />
+
+            </div>
+
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-red-500/10 bg-red-500/5 px-5 py-3 text-xs font-bold text-red-300">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+              Looking for shocked expression
+            </div>
+
           </div>
 
-          <p className="text-slate-600 text-sm mt-6">
-            Looking for shocked expression 👀
-          </p>
         </div>
       </main>
     );
   }
 
   // ============================================================
-  // NO SHOCK
+  // NOT SLEEPING SCREEN
   // ============================================================
 
   function renderNotSleeping() {
     return (
-      <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <div className="text-center px-6">
+      <main className="relative min-h-screen overflow-hidden bg-[#0d0b12] text-white">
 
-          <div className="text-[9rem]">
-            🐹
+        <div className="absolute inset-0">
+
+          <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-500/10 blur-[110px]" />
+
+        </div>
+
+        <div className="relative flex min-h-screen items-center justify-center px-6">
+
+          <div className="text-center">
+
+            <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-[2.5rem] bg-white/[0.04] text-[7rem] shadow-2xl">
+              🐹
+            </div>
+
+            <p className="mt-10 text-[10px] font-black uppercase tracking-[0.45em] text-slate-500">
+              Shock Test Complete
+            </p>
+
+            <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-6xl">
+              ഞാൻ ഉറങ്ങിയിട്ടില്ലെടാ!
+            </h1>
+
+            <p className="mt-5 text-xl font-bold text-slate-300">
+              Nice try. 😏
+            </p>
+
+            <p className="mt-3 text-sm text-slate-600">
+              No shocked expression detected.
+            </p>
+
+            <div className="mx-auto mt-8 flex w-fit items-center gap-2 rounded-full border border-white/5 bg-white/[0.03] px-5 py-3 text-xs font-bold text-slate-500">
+              ✓ Calm reaction
+            </div>
+
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-black mt-8">
-            ഞാൻ ഉറങ്ങിയിട്ടില്ലെടാ!
-          </h1>
-
-          <p className="text-xl text-slate-400 mt-6">
-            Nice try. 😏
-          </p>
-
-          <p className="text-slate-600 mt-3">
-            No shocked expression detected.
-          </p>
         </div>
       </main>
     );
   }
-
-  // ============================================================
+    // ============================================================
   // GALLERY
   // ============================================================
 
   function renderGallery() {
+    const capturedFrames =
+      getCapturedFrames();
+
+    const totalSeconds =
+      capturedFrames.length * 2;
+
     return (
-      <main className="min-h-screen bg-[#f5f0e6] text-slate-900 px-6 py-12">
+      <main className="relative min-h-screen overflow-hidden bg-[#fffaf5] text-slate-900">
 
-        <div className="max-w-6xl mx-auto">
+        {/* ==================================================
+            BACKGROUND
+        ================================================== */}
 
-          <div className="text-center">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-            <div className="text-7xl">
+          <div className="absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-pink-200/30 blur-3xl" />
+
+          <div className="absolute -right-40 top-20 h-[500px] w-[500px] rounded-full bg-purple-200/30 blur-3xl" />
+
+          <div className="absolute bottom-[-200px] left-[30%] h-[500px] w-[500px] rounded-full bg-orange-200/30 blur-3xl" />
+
+          <div className="absolute left-10 top-28 text-4xl opacity-20">
+            ✨
+          </div>
+
+          <div className="absolute right-10 top-44 text-5xl opacity-15">
+            🐹
+          </div>
+
+          <div className="absolute bottom-20 right-20 text-4xl opacity-15">
+            ⭐
+          </div>
+
+        </div>
+
+        <div className="relative mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+          {/* ==================================================
+              HEADER
+          ================================================== */}
+
+          <header className="mx-auto max-w-4xl text-center">
+
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-[2rem] border border-white bg-white text-6xl shadow-xl">
               🐹
             </div>
 
-            <p className="uppercase tracking-[0.4em] text-sm text-slate-500 mt-6">
+            <p className="mt-7 text-[10px] font-black uppercase tracking-[0.4em] text-purple-500">
               Hamster Therapy
             </p>
 
-            <h1 className="text-5xl md:text-7xl font-black mt-4">
-              Gallery
+            <h1 className="mt-3 text-5xl font-black tracking-[-0.04em] text-slate-950 sm:text-6xl md:text-7xl">
+              Your Results
             </h1>
 
-            <p className="text-xl text-slate-500 mt-5">
-              Your therapy session memories.
+            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-slate-400 sm:text-lg">
+              Your facial relaxation journey,
+              captured one expression at a time.
             </p>
-          </div>
 
-          {/* IMAGE SIZE CONTROLS */}
+            {/* SESSION META */}
 
-          <div className="flex justify-center flex-wrap gap-3 mt-10">
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
 
-            <button
-              onClick={() =>
-                setImageSize("small")
-              }
-              className={`px-6 py-3 rounded-full font-semibold transition ${
-                imageSize === "small"
-                  ? "bg-black text-white"
-                  : "bg-white"
-              }`}
-            >
-              Small
-            </button>
+              <div className="rounded-full border border-white bg-white px-5 py-2.5 text-xs font-black text-slate-600 shadow-sm">
+                📸 {capturedFrames.length} frames
+              </div>
 
-            <button
-              onClick={() =>
-                setImageSize("medium")
-              }
-              className={`px-6 py-3 rounded-full font-semibold transition ${
-                imageSize === "medium"
-                  ? "bg-black text-white"
-                  : "bg-white"
-              }`}
-            >
-              Medium
-            </button>
+              <div className="rounded-full border border-white bg-white px-5 py-2.5 text-xs font-black text-slate-600 shadow-sm">
+                🎬 {totalSeconds}s session
+              </div>
 
-            <button
-              onClick={() =>
-                setImageSize("large")
-              }
-              className={`px-6 py-3 rounded-full font-semibold transition ${
-                imageSize === "large"
-                  ? "bg-black text-white"
-                  : "bg-white"
-              }`}
-            >
-              Large
-            </button>
-          </div>
+              <div className="rounded-full border border-emerald-100 bg-emerald-50 px-5 py-2.5 text-xs font-black text-emerald-600 shadow-sm">
+                ✓ Session complete
+              </div>
 
-          {/* GALLERY */}
+            </div>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+          </header>
+
+          {/* ==================================================
+              IMAGE SIZE CONTROL
+          ================================================== */}
+
+          <section className="mx-auto mt-10 flex max-w-4xl flex-col items-center justify-between gap-4 rounded-[1.75rem] border border-white bg-white/80 p-4 shadow-lg shadow-slate-200/40 backdrop-blur sm:flex-row sm:p-5">
+
+            <div className="text-center sm:text-left">
+
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-slate-400">
+                Gallery View
+              </p>
+
+              <p className="mt-1 text-sm font-black text-slate-800">
+                Choose your frame size
+              </p>
+
+            </div>
+
+            <div className="flex rounded-2xl bg-slate-100 p-1">
+
+              {(
+                [
+                  ["small", "Small"],
+                  ["medium", "Medium"],
+                  ["large", "Large"],
+                ] as const
+              ).map(([size, label]) => (
+
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() =>
+                    setImageSize(size)
+                  }
+                  className={`
+                    rounded-xl px-4 py-2.5 text-xs
+                    font-black transition-all duration-200
+                    ${
+                      imageSize === size
+                        ? "bg-white text-slate-950 shadow-sm"
+                        : "text-slate-400 hover:text-slate-700"
+                    }
+                  `}
+                >
+                  {label}
+                </button>
+
+              ))}
+
+            </div>
+
+          </section>
+
+          {/* ==================================================
+              GALLERY GRID
+          ================================================== */}
+
+          <section className="mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-2">
 
             <GalleryCard
               frame={1}
               emoji="🥱"
               title="The Yawn"
-              trollMessage={trollingMessages[1]}
+              trollMessage={
+                trollingMessages[1]
+              }
               image={getFrame(1)}
               imageClass={imageClass}
             />
@@ -2042,7 +2616,9 @@ export default function TherapyStage() {
               frame={2}
               emoji="😴"
               title="Droopy Daze"
-              trollMessage={trollingMessages[2]}
+              trollMessage={
+                trollingMessages[2]
+              }
               image={getFrame(2)}
               imageClass={imageClass}
             />
@@ -2051,7 +2627,9 @@ export default function TherapyStage() {
               frame={3}
               emoji="😗"
               title="Zen Pout"
-              trollMessage={trollingMessages[3]}
+              trollMessage={
+                trollingMessages[3]
+              }
               image={getFrame(3)}
               imageClass={imageClass}
             />
@@ -2060,231 +2638,419 @@ export default function TherapyStage() {
               frame={4}
               emoji="🫠"
               title="Coma"
-              trollMessage={trollingMessages[4]}
+              trollMessage={
+                trollingMessages[4]
+              }
               image={getFrame(4)}
               imageClass={imageClass}
             />
 
             {frame5Captured &&
               getFrame(5) && (
-                <div className="md:col-span-2">
+                <div className="lg:col-span-2">
                   <GalleryCard
                     frame={5}
                     emoji="😱"
                     title="SHOCK REACTION"
-                    trollMessage={trollingMessages[5]}
+                    trollMessage={
+                      trollingMessages[5]
+                    }
                     image={getFrame(5)}
                     imageClass={imageClass}
                     shocked
                   />
                 </div>
               )}
-          </div>
 
-          {/* FINAL RESULT */}
+          </section>
 
-          <div
-            className={`mt-12 rounded-3xl p-8 md:p-12 text-white shadow-xl ${
-              frame5Captured
-                ? "bg-red-600"
-                : "bg-slate-950"
-            }`}
+          {/* ==================================================
+              FINAL RESULT
+          ================================================== */}
+
+          <section
+            className={`
+              mx-auto mt-8 max-w-6xl overflow-hidden
+              rounded-[2rem] p-7 text-white shadow-2xl
+              sm:p-10 md:p-12
+              ${
+                frame5Captured
+                  ? "bg-gradient-to-br from-red-600 via-rose-600 to-orange-500"
+                  : "bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950"
+              }
+            `}
           >
-            <p className="uppercase tracking-[0.3em] text-sm opacity-70">
-              Final Result
-            </p>
 
-            {frame5Captured ? (
-              <>
-                <h2 className="text-4xl md:text-6xl font-black mt-4">
-                  😂 GOTCHA!
-                </h2>
+            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
 
-                <p className="text-lg mt-5 opacity-80">
-                  We caught your shocked reaction.
-                </p>
+              <div>
 
-                <p className="text-2xl font-bold mt-5">
-                  Frame 5 successfully captured 😱
-                </p>
-              </>
-            ) : (
-              <>
-                <h2 className="text-4xl md:text-6xl font-black mt-4">
-                  😏 NICE TRY!
-                </h2>
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.25em] opacity-60">
+                  <span>Final Result</span>
+                  <span>•</span>
+                  <span>Complete</span>
+                </div>
 
-                <p className="text-lg mt-5 text-slate-400">
-                  You stayed calm during the
-                  entire 3-second shock check.
-                </p>
+                {frame5Captured ? (
+                  <>
+                    <h2 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">
+                      😂 GOTCHA!
+                    </h2>
 
-                <p className="text-2xl font-bold mt-5">
-                  No shock image captured.
-                </p>
-              </>
-            )}
-          </div>
+                    <p className="mt-4 max-w-xl text-base leading-7 text-white/75">
+                      We caught your shocked reaction.
+                      The hamster officially has evidence.
+                    </p>
 
-          {/* ============================================================
-              SESSION VIDEO
-          ============================================================ */}
+                    <div className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-white/10 px-5 py-3 text-sm font-black backdrop-blur">
+                      😱 Frame 5 successfully captured
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">
+                      😏 NICE TRY!
+                    </h2>
 
-          <div className="mt-12 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="mt-4 max-w-xl text-base leading-7 text-white/60">
+                      You stayed calm during the
+                      entire 3-second shock check.
+                      The hamster couldn't catch you.
+                    </p>
 
-            <div className="text-center">
+                    <div className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-white/10 px-5 py-3 text-sm font-black backdrop-blur">
+                      🧘 Calm reaction
+                    </div>
+                  </>
+                )}
 
-              <h2 className="text-2xl font-black">
-                🎬 Session Video
-              </h2>
+              </div>
 
-              <p className="mt-2 text-sm text-slate-500">
-                {getCapturedFrames().length * 2} seconds
-                {" "}
-                • 2 seconds per captured frame
-              </p>
+              <div className="hidden shrink-0 text-[8rem] leading-none opacity-90 md:block">
+                {frame5Captured
+                  ? "😱"
+                  : "😎"}
+              </div>
 
             </div>
 
-            {/* CREATE BUTTON — ONLY BEFORE VIDEO EXISTS */}
+          </section>
 
-            {!videoUrl && !videoGenerating && (
-              <div className="mt-6 text-center">
+          {/* ==================================================
+              SESSION VIDEO
+          ================================================== */}
 
-                <button
-                  type="button"
-                  onClick={generateVideo}
-                  className="rounded-2xl bg-black px-6 py-3 font-black text-white transition hover:scale-105"
-                >
-                  🎬 Create Session Video
-                </button>
+          <section className="mx-auto mt-8 max-w-6xl overflow-hidden rounded-[2rem] border border-white bg-white shadow-2xl shadow-slate-200/50">
 
-              </div>
-            )}
+            {/* VIDEO HEADER */}
 
-            {/* GENERATING STATE */}
+            <div className="border-b border-slate-100 bg-gradient-to-r from-slate-950 via-slate-900 to-purple-950 px-6 py-8 text-white sm:px-8">
 
-            {videoGenerating && (
-              <div className="mt-8 text-center">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 
-                <div className="text-5xl animate-pulse">
-                  🎥
-                </div>
+                <div>
 
-                <p className="mt-4 text-lg font-black">
-                  Creating your session video...
-                </p>
+                  <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.25em] text-purple-300">
+                    <span>🎬</span>
+                    <span>Session Memory</span>
+                  </div>
 
-                <p className="mt-2 text-sm text-slate-500">
-                  Please wait. Your frames are being
-                  converted into a video.
-                </p>
+                  <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+                    Session Video
+                  </h2>
 
-                <div className="mx-auto mt-5 h-2 w-64 overflow-hidden rounded-full bg-slate-200">
-
-                  <div className="h-full w-1/2 animate-pulse rounded-full bg-black" />
+                  <p className="mt-2 text-sm text-slate-400">
+                    {totalSeconds} seconds
+                    {" "}
+                    • 2 seconds per captured frame
+                  </p>
 
                 </div>
 
-                {/* NO DOWNLOAD BUTTON WHILE GENERATING */}
-
-              </div>
-            )}
-
-            {/* ERROR */}
-
-            {videoError && !videoGenerating && (
-              <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600">
-                {videoError}
-              </div>
-            )}
-
-            {/* VIDEO + DOWNLOAD — ONLY AFTER COMPLETE */}
-
-            {videoUrl && !videoGenerating && (
-              <div className="mt-8">
-
-                <p className="mb-4 text-center font-bold text-emerald-600">
-                  ✅ Video completely generated!
-                </p>
-
-                <video
-                  src={videoUrl}
-                  controls
-                  playsInline
-                  className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-200 bg-black shadow-xl"
-                />
-
-                <div className="mt-5 flex justify-center">
-
-                  <a
-                    href={videoUrl}
-                    download="hamster-therapy-session.webm"
-                    className="rounded-2xl bg-black px-6 py-3 font-black text-white transition hover:scale-105"
-                  >
-                    ⬇️ Download Video
-                  </a>
-
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-3xl backdrop-blur">
+                  🎞️
                 </div>
 
               </div>
-            )}
 
-          </div>
+            </div>
 
-          {/* FRAME SUMMARY */}
+            <div className="p-6 sm:p-8">
 
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
+              {/* ==================================================
+                  CREATE BUTTON
+              ================================================== */}
 
-            <Summary
-              emoji="🥱"
-              title="Frame 1"
-              active={frame1Captured}
-            />
+              {!videoUrl &&
+                !videoGenerating && (
+                  <div className="py-8 text-center">
 
-            <Summary
-              emoji="😴"
-              title="Frame 2"
-              active={frame2Captured}
-            />
+                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-purple-50 text-4xl">
+                      🎥
+                    </div>
 
-            <Summary
-              emoji="😗"
-              title="Frame 3"
-              active={frame3Captured}
-            />
+                    <h3 className="mt-6 text-xl font-black text-slate-900">
+                      Turn your memories into a video
+                    </h3>
 
-            <Summary
-              emoji="🫠"
-              title="Frame 4"
-              active={frame4Captured}
-            />
+                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
+                      Each captured expression will stay
+                      on screen for 2 seconds.
+                    </p>
 
-            <Summary
-              emoji="😱"
-              title="Shock Frame"
-              active={frame5Captured}
-            />
+                    <button
+                      type="button"
+                      onClick={generateVideo}
+                      className="mt-7 inline-flex items-center gap-3 rounded-2xl bg-slate-950 px-7 py-4 text-sm font-black text-white shadow-xl shadow-slate-300 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl active:scale-95"
+                    >
+                      🎬
+                      Create Session Video
+                      <span className="text-white/40">
+                        →
+                      </span>
+                    </button>
 
-          </div>
+                  </div>
+                )}
 
-          {/* RESTART */}
+              {/* ==================================================
+                  GENERATING
+              ================================================== */}
 
-          <div className="text-center mt-12">
+              {videoGenerating && (
+                <div className="py-10 text-center">
+
+                  <div className="relative mx-auto flex h-24 w-24 items-center justify-center">
+
+                    <div className="absolute inset-0 animate-ping rounded-3xl bg-purple-100" />
+
+                    <div className="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-purple-50 text-4xl">
+                      🎥
+                    </div>
+
+                  </div>
+
+                  <h3 className="mt-7 text-2xl font-black text-slate-900">
+                    Creating your session video...
+                  </h3>
+
+                  <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
+                    Please wait while your captured
+                    frames are converted into a video.
+                  </p>
+
+                  <div className="mx-auto mt-7 max-w-sm">
+
+                    <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+
+                      <div className="h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-purple-500 to-pink-500" />
+
+                    </div>
+
+                    <p className="mt-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      Processing frames
+                    </p>
+
+                  </div>
+
+                </div>
+              )}
+
+              {/* ==================================================
+                  ERROR
+              ================================================== */}
+
+              {videoError &&
+                !videoGenerating && (
+                  <div className="rounded-3xl border border-red-200 bg-red-50 p-6">
+
+                    <div className="flex gap-4">
+
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-xl">
+                        ⚠️
+                      </div>
+
+                      <div>
+
+                        <p className="font-black text-red-700">
+                          Video creation failed
+                        </p>
+
+                        <p className="mt-2 text-sm leading-6 text-red-600">
+                          {videoError}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+                )}
+
+              {/* ==================================================
+                  COMPLETED VIDEO
+              ================================================== */}
+
+              {videoUrl &&
+                !videoGenerating && (
+                  <div>
+
+                    <div className="mb-6 flex flex-col items-center justify-between gap-3 rounded-2xl bg-emerald-50 px-5 py-4 sm:flex-row">
+
+                      <div className="flex items-center gap-3">
+
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                          ✓
+                        </div>
+
+                        <div>
+                          <p className="text-sm font-black text-emerald-700">
+                            Video completely generated!
+                          </p>
+
+                          <p className="text-xs text-emerald-600/70">
+                            Your {totalSeconds}-second
+                            session is ready.
+                          </p>
+                        </div>
+
+                      </div>
+
+                      <span className="rounded-full bg-emerald-100 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-600">
+                        Ready
+                      </span>
+
+                    </div>
+
+                    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-black shadow-2xl">
+
+                      <video
+                        src={videoUrl}
+                        controls
+                        playsInline
+                        className="mx-auto aspect-video w-full"
+                      />
+
+                    </div>
+
+                    <div className="mt-6 flex justify-center">
+
+                      <a
+                        href={videoUrl}
+                        download="hamster-therapy-session.webm"
+                        className="inline-flex items-center gap-3 rounded-2xl bg-slate-950 px-7 py-4 text-sm font-black text-white shadow-xl shadow-slate-300 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl active:scale-95"
+                      >
+                        ⬇️
+                        Download Video
+                      </a>
+
+                    </div>
+
+                  </div>
+                )}
+
+            </div>
+
+          </section>
+
+          {/* ==================================================
+              FRAME SUMMARY
+          ================================================== */}
+
+          <section className="mx-auto mt-8 max-w-6xl">
+
+            <div className="mb-5 text-center">
+
+              <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">
+                Session Overview
+              </p>
+
+              <h2 className="mt-2 text-2xl font-black text-slate-900">
+                Your therapy journey
+              </h2>
+
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 sm:gap-4">
+
+              <Summary
+                emoji="🥱"
+                title="Frame 1"
+                active={frame1Captured}
+              />
+
+              <Summary
+                emoji="😴"
+                title="Frame 2"
+                active={frame2Captured}
+              />
+
+              <Summary
+                emoji="😗"
+                title="Frame 3"
+                active={frame3Captured}
+              />
+
+              <Summary
+                emoji="🫠"
+                title="Frame 4"
+                active={frame4Captured}
+              />
+
+              <Summary
+                emoji="😱"
+                title="Shock"
+                active={frame5Captured}
+              />
+
+            </div>
+
+          </section>
+
+          {/* ==================================================
+              TRY AGAIN
+          ================================================== */}
+
+          <section className="mx-auto mt-10 max-w-6xl text-center">
 
             <button
+              type="button"
               onClick={restart}
-              className="px-8 py-4 rounded-full bg-slate-950 text-white font-bold hover:scale-105 transition-transform"
+              className="group inline-flex items-center gap-3 rounded-2xl bg-slate-950 px-7 py-4 text-sm font-black text-white shadow-xl shadow-slate-300 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl active:scale-95"
             >
-              🐹 Try Again
+              <span className="transition-transform duration-300 group-hover:rotate-180">
+                🐹
+              </span>
+
+              Try Again
+
+              <span className="text-white/40">
+                →
+              </span>
             </button>
 
-            <p className="text-xs text-slate-400 mt-5">
-              Images are kept in this browser
-              session only.
+            <p className="mt-5 text-[10px] font-medium text-slate-400">
+              Images are kept in this browser session only.
             </p>
 
-          </div>
+          </section>
+
+          {/* ==================================================
+              PRIVACY
+          ================================================== */}
+
+          <footer className="mt-10 pb-6 text-center">
+
+            <p className="inline-flex items-center gap-2 rounded-full border border-white bg-white/70 px-5 py-3 text-[10px] font-bold text-slate-400 shadow-sm">
+              🔒
+              Your session stays in this browser
+              <span className="text-slate-300">
+                •
+              </span>
+              No cloud upload
+            </p>
+
+          </footer>
 
         </div>
       </main>
@@ -2361,24 +3127,40 @@ function Calibration({
   frame: number;
 }) {
   return (
-    <div className="mt-8 rounded-xl bg-slate-900 border border-slate-800 p-6">
+    <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-6">
 
-      <p className="text-xs uppercase tracking-widest text-slate-500">
-        {label}
-      </p>
+      <div className="flex items-start justify-between gap-4">
 
-      <p className="text-4xl font-mono text-emerald-300 mt-3">
-        {value}
-      </p>
+        <div>
 
-      <p className="text-xs text-slate-500 mt-3">
-        {target}
-      </p>
+          <p className="text-[9px] font-black uppercase tracking-[0.22em] text-slate-400">
+            {label}
+          </p>
+
+          <p className="mt-2 text-4xl font-black text-slate-950">
+            {value}
+          </p>
+
+        </div>
+
+        <div className="rounded-2xl bg-white px-4 py-3 text-right shadow-sm">
+
+          <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
+            Target
+          </p>
+
+          <p className="mt-1 text-xs font-black text-slate-600">
+            {target}
+          </p>
+
+        </div>
+
+      </div>
 
       {captured && (
-        <p className="text-emerald-400 mt-4 font-semibold">
+        <div className="mt-5 rounded-2xl bg-emerald-50 px-4 py-3 text-center text-sm font-black text-emerald-600">
           📸 Frame {frame} captured!
-        </p>
+        </div>
       )}
 
     </div>
@@ -2408,98 +3190,172 @@ function GalleryCard({
 }) {
   if (!image) {
     return (
-      <div className="rounded-3xl bg-slate-100 p-8 text-center">
+      <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-lg">
 
-        <div className="text-5xl">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-slate-100 text-5xl">
           {emoji}
         </div>
 
-        <h2 className="font-bold text-xl mt-4">
+        <p className="mt-5 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
           Frame {frame}
-        </h2>
-
-        <p className="text-slate-400 mt-2">
-          No image captured.
         </p>
+
+        <h2 className="mt-2 text-xl font-black text-slate-800">
+          No image captured
+        </h2>
 
       </div>
     );
   }
 
   return (
-    <div
-      className={`rounded-3xl overflow-hidden bg-white shadow-xl ${
-        shocked
-          ? "border-4 border-red-500"
-          : "border border-black/5"
-      }`}
+    <article
+      className={`
+        group overflow-hidden rounded-[2rem] bg-white
+        shadow-xl shadow-slate-200/50 transition-all duration-300
+        hover:-translate-y-1 hover:shadow-2xl
+        ${
+          shocked
+            ? "ring-4 ring-red-400/30"
+            : "border border-slate-100"
+        }
+      `}
     >
 
-      <div className="p-5">
+      {/* ==================================================
+          CARD HEADER
+      ================================================== */}
 
-        {/* TROLLING MESSAGE FIRST */}
+      <div
+        className={`
+          flex items-center justify-between px-6 py-5
+          ${
+            shocked
+              ? "bg-gradient-to-r from-red-600 to-orange-500 text-white"
+              : "bg-slate-950 text-white"
+          }
+        `}
+      >
 
-        <div className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="flex items-center gap-3">
 
-          <p className="text-xs font-black uppercase tracking-widest text-amber-700">
-            🐹 ഹാംസ്റ്ററിന്റെ അഭിപ്രായം
-          </p>
-
-          <p className="mt-2 text-base font-bold leading-7 text-slate-800">
-            {trollMessage}
-          </p>
-
-        </div>
-
-        {/* FRAME TITLE */}
-
-        <div className="flex items-center justify-between mb-4">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-2xl">
+            {emoji}
+          </div>
 
           <div>
 
-            <p className="text-xs uppercase tracking-widest text-slate-400">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-50">
               Frame {frame}
             </p>
 
-            <h2 className="font-black text-xl mt-1">
-              {emoji} {title}
+            <h2 className="mt-1 text-lg font-black">
+              {title}
             </h2>
 
           </div>
 
-          {shocked && (
-            <span className="text-red-500 font-black">
-              SHOCKED
-            </span>
-          )}
+        </div>
+
+        {shocked && (
+          <span className="rounded-full bg-white/20 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider backdrop-blur">
+            ⚡ Shock
+          </span>
+        )}
+
+      </div>
+
+      <div className="p-5 sm:p-6">
+
+        {/* ==================================================
+            TROLL MESSAGE FIRST
+        ================================================== */}
+
+        <div
+          className={`
+            relative overflow-hidden rounded-3xl p-5
+            ${
+              shocked
+                ? "border border-red-100 bg-gradient-to-br from-red-50 to-orange-50"
+                : "border border-amber-100 bg-gradient-to-br from-amber-50 to-orange-50"
+            }
+          `}
+        >
+
+          <div className="absolute -right-5 -top-5 text-6xl opacity-10">
+            🐹
+          </div>
+
+          <div className="relative">
+
+            <div className="flex items-center gap-2">
+
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white shadow-sm">
+                🐹
+              </span>
+
+              <p
+                className={`
+                  text-[9px] font-black uppercase tracking-[0.2em]
+                  ${
+                    shocked
+                      ? "text-red-500"
+                      : "text-amber-600"
+                  }
+                `}
+              >
+                Hamster's Opinion
+              </p>
+
+            </div>
+
+            <p className="mt-4 text-base font-black leading-7 text-slate-800">
+              {trollMessage}
+            </p>
+
+          </div>
 
         </div>
 
-        {/* IMAGE */}
+        {/* ==================================================
+            IMAGE
+        ================================================== */}
 
-        <div className="w-full flex justify-center bg-slate-100 rounded-2xl overflow-hidden">
+        <div className="mt-5 overflow-hidden rounded-3xl bg-slate-100 p-2">
 
-          <img
-            src={image}
-            alt={`Hamster Therapy ${title}`}
-            className={`${imageClass} w-auto max-w-full object-contain`}
-          />
+          <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden rounded-2xl bg-slate-200">
+
+            <img
+              src={image}
+              alt={`Hamster Therapy ${title}`}
+              className={`
+                ${imageClass}
+                w-auto max-w-full object-contain
+                transition-transform duration-500
+                group-hover:scale-[1.02]
+              `}
+            />
+
+          </div>
 
         </div>
 
-        {/* DOWNLOAD IMAGE */}
+        {/* ==================================================
+            DOWNLOAD
+        ================================================== */}
 
         <a
           href={image}
           download={`hamster-therapy-frame-${frame}.jpg`}
-          className="inline-block mt-4 px-5 py-2 rounded-full bg-slate-950 text-white text-sm font-semibold hover:opacity-80"
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3.5 text-sm font-black text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 active:scale-[0.98]"
         >
+          ⬇️
           Download Frame {frame}
         </a>
 
       </div>
 
-    </div>
+    </article>
   );
 }
 
@@ -2518,22 +3374,51 @@ function Summary({
 }) {
   return (
     <div
-      className={`rounded-2xl p-5 text-center shadow ${
-        active
-          ? "bg-white"
-          : "bg-slate-100 opacity-50"
-      }`}
+      className={`
+        relative overflow-hidden rounded-3xl border p-5
+        text-center transition-all duration-300
+        ${
+          active
+            ? "border-white bg-white shadow-lg shadow-slate-200/50"
+            : "border-slate-200 bg-slate-100/70 opacity-60"
+        }
+      `}
     >
 
-      <p className="text-3xl">
-        {emoji}
-      </p>
+      {active && (
+        <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white">
+          ✓
+        </div>
+      )}
 
-      <p className="font-bold mt-2">
+      <div
+        className={`
+          mx-auto flex h-14 w-14 items-center
+          justify-center rounded-2xl text-3xl
+          ${
+            active
+              ? "bg-gradient-to-br from-pink-50 to-purple-50"
+              : "bg-slate-200"
+          }
+        `}
+      >
+        {emoji}
+      </div>
+
+      <p className="mt-3 text-xs font-black text-slate-800">
         {title}
       </p>
 
-      <p className="text-xs text-slate-400 mt-1">
+      <p
+        className={`
+          mt-1 text-[9px] font-black uppercase tracking-wider
+          ${
+            active
+              ? "text-emerald-500"
+              : "text-slate-400"
+          }
+        `}
+      >
         {active
           ? "Captured"
           : "Not captured"}
