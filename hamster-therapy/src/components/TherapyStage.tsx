@@ -181,8 +181,162 @@ export default function TherapyStage() {
 
   const [videoError, setVideoError] =
     useState("");
+  const audioContextRef = useRef<AudioContext | null>(null);
 
-  // ============================================================
+  function getAudioContext() {
+    if (audioContextRef.current) return audioContextRef.current;
+
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as typeof window & {
+        webkitAudioContext?: typeof AudioContext;
+      }).webkitAudioContext;
+
+    if (!AudioContextClass) {
+      console.warn("Web Audio API is not supported.");
+      return null;
+    }
+
+    const ctx = new AudioContextClass();
+    audioContextRef.current = ctx;
+    return ctx;
+  }
+
+  async function ensureAudioRunning() {
+    const ctx = getAudioContext();
+    if (!ctx) return null;
+
+    if (ctx.state !== "running") {
+      try {
+        await ctx.resume();
+      } catch (err) {
+        console.warn("Audio resume blocked by browser:", err);
+        return null;
+      }
+    }
+
+    return ctx.state === "running" ? ctx : null;
+  }
+
+  async function unlockAudio() {
+    const ctx = await ensureAudioRunning();
+    return ctx;
+  }
+
+
+  async function playBeep(
+    frequency = 700,
+    duration = 0.12,
+    volume = 0.08,
+    type: OscillatorType = "sine",
+  ) {
+    const ctx = await ensureAudioRunning();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+    oscillator.start(now);
+    oscillator.stop(now + duration + 0.03);
+  }
+
+  function playStageBeep() {
+    void playBeep(740, 0.16, 0.09, "sine");
+  }
+
+  function playCountdownBeep() {
+    void playBeep(560, 0.13, 0.075, "sine");
+  }
+
+  function playSuccessBeep() {
+    void playBeep(880, 0.14, 0.09, "sine");
+    window.setTimeout(() => {
+      void playBeep(1175, 0.20, 0.09, "sine");
+    }, 110);
+  }
+
+  async function playShockBeep() {
+    const ctx = await ensureAudioRunning();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+
+    // Deep impact / alarm layer
+    const o1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    o1.type = "sawtooth";
+    o1.frequency.setValueAtTime(320, now);
+    o1.frequency.exponentialRampToValueAtTime(45, now + 0.55);
+    g1.gain.setValueAtTime(0.0001, now);
+    g1.gain.exponentialRampToValueAtTime(0.38, now + 0.012);
+    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.58);
+    o1.connect(g1);
+    g1.connect(ctx.destination);
+    o1.start(now);
+    o1.stop(now + 0.6);
+
+    // High-pitched jump-scare layer
+    const o2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    o2.type = "square";
+    o2.frequency.setValueAtTime(1200, now);
+    o2.frequency.exponentialRampToValueAtTime(180, now + 0.28);
+    g2.gain.setValueAtTime(0.0001, now);
+    g2.gain.exponentialRampToValueAtTime(0.18, now + 0.008);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+    o2.connect(g2);
+    g2.connect(ctx.destination);
+    o2.start(now);
+    o2.stop(now + 0.34);
+
+    // Short noise burst for a much more audible shock hit
+    const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.32, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      const envelope = Math.exp(-i / (ctx.sampleRate * 0.07));
+      data[i] = (Math.random() * 2 - 1) * envelope;
+    }
+
+    const noise = ctx.createBufferSource();
+    const noiseGain = ctx.createGain();
+    noise.buffer = buffer;
+    noiseGain.gain.setValueAtTime(0.0001, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.32, now + 0.006);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.30);
+    noise.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start(now);
+  }
+
+  useEffect(() => {
+    const unlock = () => {
+      void unlockAudio();
+    };
+
+    // The browser requires a real user gesture before allowing audible Web Audio.
+    // We use the user's first natural interaction anywhere on the page; no sound button is needed.
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("touchstart", unlock, { passive: true });
+    window.addEventListener("keydown", unlock);
+    window.addEventListener("click", unlock);
+
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("keydown", unlock);
+      window.removeEventListener("click", unlock);
+    };
+  }, []);
+
   // MODE
   // ============================================================
 
@@ -399,6 +553,7 @@ export default function TherapyStage() {
         videoRef.current.pause();
         videoRef.current.srcObject = null;
       }
+      if (audioContextRef.current) { void audioContextRef.current.close(); audioContextRef.current = null; }
     };
   }, []);
 
@@ -523,6 +678,8 @@ export default function TherapyStage() {
       "Yawn detected! Capturing Frame 1...",
     );
 
+    playStageBeep();
+
     captureFrame(1);
 
     setCalibration(0);
@@ -567,6 +724,8 @@ export default function TherapyStage() {
     setStatus(
       "Droopy eyes detected! Capturing Frame 2...",
     );
+
+    playStageBeep();
 
     captureFrame(2);
 
@@ -613,6 +772,8 @@ export default function TherapyStage() {
       "Zen pout detected! Capturing Frame 3...",
     );
 
+    playStageBeep();
+
     captureFrame(3);
 
     setCalibration(0);
@@ -656,6 +817,8 @@ export default function TherapyStage() {
       "Coma detected! Capturing Frame 4...",
     );
 
+    playStageBeep();
+
     captureFrame(4);
 
     setCalibration(1);
@@ -696,6 +859,8 @@ export default function TherapyStage() {
       "Hamster is going to sleep...",
     );
 
+    playCountdownBeep();
+
     console.log(
       "🐹 HAMSTER GOING TO SLEEP",
     );
@@ -708,6 +873,7 @@ export default function TherapyStage() {
 
         if (current > 0) {
           setCountdown(current);
+          playCountdownBeep();
 
           console.log(
             `😴 COUNTDOWN: ${current}`,
@@ -1042,6 +1208,8 @@ export default function TherapyStage() {
               console.log(
                 "😱 SHOCKED EXPRESSION DETECTED!",
               );
+
+              void playShockBeep();
 
               if (
                 !shockCapturedRef.current
@@ -1641,6 +1809,7 @@ export default function TherapyStage() {
         URL.createObjectURL(blob);
 
       setVideoUrl(url);
+      playSuccessBeep();
 
       console.log(
         `🎥 VIDEO CREATED — ${frames.length * 2} SECONDS`,
@@ -1747,6 +1916,7 @@ export default function TherapyStage() {
             </div>
 
           </header>
+
 <div className="text-center">
   <h1 className="text-4xl font-extrabold text-pink-500 sm:text-6xl md:text-7xl">
     എലി കുട്ടനെ ഉറങ്ങാൻ സഹായിക്കാമോ?
