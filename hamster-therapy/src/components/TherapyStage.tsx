@@ -1710,6 +1710,10 @@ export default function TherapyStage() {
       function drawFrame(
         image: HTMLImageElement,
       ) {
+        if (!ctx) {
+          return;
+        }
+
         ctx.fillStyle = "#020617";
 
         ctx.fillRect(
@@ -3289,64 +3293,6 @@ export default function TherapyStage() {
       {mode === "reveal" &&
         renderGallery()}
     </>
-  );
-}
-
-// ============================================================
-// CALIBRATION
-// ============================================================
-
-function Calibration({
-  label,
-  value,
-  target,
-  captured,
-  frame,
-}: {
-  label: string;
-  value: string;
-  target: string;
-  captured: boolean;
-  frame: number;
-}) {
-  return (
-    <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-6">
-
-      <div className="flex items-start justify-between gap-4">
-
-        <div>
-
-          <p className="text-[9px] font-black uppercase tracking-[0.22em] text-slate-400">
-            {label}
-          </p>
-
-          <p className="mt-2 text-4xl font-black text-slate-950">
-            {value}
-          </p>
-
-        </div>
-
-        <div className="rounded-2xl bg-white px-4 py-3 text-right shadow-sm">
-
-          <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
-            Target
-          </p>
-
-          <p className="mt-1 text-xs font-black text-slate-600">
-            {target}
-          </p>
-
-        </div>
-
-      </div>
-
-      {captured && (
-        <div className="mt-5 rounded-2xl bg-emerald-50 px-4 py-3 text-center text-sm font-black text-emerald-600">
-          📸 Frame {frame} captured!
-        </div>
-      )}
-
-    </div>
   );
 }
 
