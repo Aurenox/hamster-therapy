@@ -41,9 +41,9 @@ const stageInfo = {
     technique: "Vagus Nerve Decompression",
     description:
       "Open your jaw slowly and comfortably. Let the tension melt away.",
-    malayalam: "ഇതൊരു കൊട്ടാവയാണോ?",
+    malayalam: "ഒരു വലിയ കൊട്ടുവാ എടുത്താലോ? 🥱🐹",
     instruction:
-      "താടി തറയിൽ മുട്ടുന്നതുപോലെ താഴോട്ട് വിടൂ ഷാജീ!",
+      "വായ നന്നായി തുറക്കൂ കുട്ടാ... എലി കുട്ടന് ഉറങ്ങണ്ടേ? 🐹💤",
     calibrationLabel: "Mouth Calibration",
     target: "Target: > 0.050",
   },
@@ -55,9 +55,9 @@ const stageInfo = {
     technique: "Orbicularis Oculi Relaxation",
     description:
       "Slowly relax your eyes and allow them to become heavy and sleepy.",
-    malayalam: "കണ്ണുകൾക്ക് ഉറക്കം വരുന്നുണ്ടോ?",
+    malayalam: "എലി കുട്ടന് ഉറക്കം പിടിച്ചു തുടങ്ങി! 🐹💤",
     instruction:
-      "പതുക്കെ കണ്ണുകൾ അടച്ച് ക്ഷീണിച്ച പോലെ ഇരിക്കൂ ഷാജീ!",
+      "കണ്ണുകൾ പതുക്കെ അടയ്ക്കൂ… എലി കുട്ടന് ഉറക്കം കൂടുതൽ പിടിക്കട്ടെ! 😴💤",
     calibrationLabel: "Eye Calibration",
     target: "Target: < 0.022",
   },
@@ -69,9 +69,9 @@ const stageInfo = {
     technique: "Facial Relaxation",
     description:
       "Bring your lips gently together into a tiny relaxed pout.",
-    malayalam: "ഒരു ചെറിയ Zen pout ചെയ്യൂ 😗",
+    malayalam: "എലി കുട്ടൻ ഇപ്പോൾ കിടക്കാൻ തയ്യാറാണ്! 🐹💤",
     instruction:
-      "ചുണ്ട് ചെറുതായി മുന്നോട്ട് തള്ളിക്കൊണ്ട് ഇരിക്കൂ ഷാജീ!",
+      "ചുണ്ട് പതുക്കെ മുന്നോട്ട് തള്ളൂ… എലി കുട്ടന് ഇനി കിടന്ന് വിശ്രമിക്കാം! 😗🐹",
     calibrationLabel: "Pout Calibration",
     target: "Target: < 0.320",
   },
@@ -83,9 +83,9 @@ const stageInfo = {
     technique: "Deep Facial Relaxation",
     description:
       "Close your eyes completely while keeping your mouth relaxed and open.",
-    malayalam: "ഉറങ്ങിപ്പോയ പോലെ ഇരിക്കൂ... 😴",
+    malayalam: "എലി കുട്ടൻ ഇപ്പോൾ ആഴത്തിൽ ഉറങ്ങുകയാണ്… 💤🐹",
     instruction:
-      "കണ്ണുകൾ അടയ്ക്കൂ, വായ തുറന്നുതന്നെ വെക്കൂ ഷാജീ!",
+      "കണ്ണുകൾ പൂർണ്ണമായി അടയ്ക്കൂ, വായ ശാന്തമായി തുറന്നുവെക്കൂ… എലി കുട്ടൻ ആഴത്തിൽ ഉറങ്ങട്ടെ! 😴🐹",
     calibrationLabel: "Coma Calibration",
     target: "Eyes < 0.012 • Mouth > 0.070",
   },
