@@ -1731,7 +1731,7 @@ export default function TherapyStage() {
                 </p>
 
                 <p className="mt-0.5 text-sm font-black text-slate-800">
-                  Facial Relaxation Lab
+                  Hamster Sleep Journey
                 </p>
               </div>
 
@@ -1743,7 +1743,16 @@ export default function TherapyStage() {
             </div>
 
           </header>
+<div className="text-center">
+  <h1 className="text-4xl font-extrabold text-pink-500 sm:text-6xl md:text-7xl">
+    എലി കുട്ടനെ ഉറങ്ങാൻ സഹായിക്കാമോ?
+  </h1>
 
+  <h2 className="mt-4 text-2xl font-bold text-pink-400 sm:text-3xl md:text-4xl">
+    നിങ്ങളുടെ മുഖഭാവം കൊണ്ട് എലി കുട്ടനെ ഉറക്കൂ
+  </h2>
+</div>
+<br />
           {/* ==================================================
               PROGRESS CARD
           ================================================== */}
