@@ -72,14 +72,20 @@ For Software:
 ![Home Page](screenshots/home-page.png)
 *Hamster Therapy home screen where the user begins the facial-expression therapy experience.*
 
-![Therapy Stage](screenshots/therapy-stage-1-yawn.png)
-*Stage 1 — The Yawn, where the application detects the user's facial expression in real time.*
+![Therapy Stage 1 - Yawn](screenshots/therapy-stage-1-yawn.png)
+*Stage 1 — The Yawn, where the application detects the user's facial expression.*
 
-![Sleep Countdown](screenshots/therapy-complete-countdown.png)
-*The sleep countdown shown after completing the four therapy stages.*
+![Therapy Stage 4 - Coma](screenshots/therapy-stage-4-coma.png)
+*Stage 4 — Coma, the final facial-expression stage of the therapy journey.*
+
+![Deep Sleep](screenshots/hamster-deep-sleep.png)
+*The deep-sleep stage that appears after completing all four therapy stages.*
+
+![Shock Detection](screenshots/shock-detection.png)
+*The hidden reaction-detection stage where the application checks the user's facial expression for a few seconds.*
 
 ![Results Gallery](screenshots/results-gallery.png)
-*The results gallery showing captured frames along with humorous Malayalam trolling messages and individual download options.*
+*The results gallery showing the captured frames with humorous Malayalam trolling messages and individual download options.*
 
 ![Session Video](screenshots/session-video.png)
 *The session video section where the captured frames can be combined into a video and downloaded.*
