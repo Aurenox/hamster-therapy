@@ -2,83 +2,92 @@
 
 
 
-# [Project Name] 🎯
+# Hamster Therapy 🐹💤
 
 
 ## Basic Details
-### Team Name: [Name]
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: SAURAV B - COLLEGE OF ENGINEERING ATTINGAL
+
 
 ### Project Description
-[2-3 lines about what your project does]
+
+**Hamster Therapy** is a fun web-based therapy experience that uses the webcam and face detection to guide users through different facial-expression exercises. The app captures their expressions and turns them into a funny Malayalam trolling gallery, with an option to create a session video. 🐹😂
+
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+
+Everyone is stressed these days.
+
+There are already hundreds of meditation apps, breathing exercises and sleep apps, but somehow none of them have a hamster judging your facial expressions.
+
+So we decided to solve this very important problem.
+
+Basically, we wanted to find out what happens when you combine a hamster, facial recognition and a little bit of Malayalam trolling. 🐹😂
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+
+We made Hamster Therapy.
+
+The app takes the user through four different stages:
+
+**🥱 Yawn → 😴 Droopy Daze → 😗 Zen Pout → 🫠 Coma**
+
+The webcam runs in the background and MediaPipe checks the user's facial landmarks to see whether they are actually doing the expressions.
+
+After finishing all four stages, the app starts a fake sleep sequence. There is also a hidden reaction test at the end. If the user reacts, the app captures that moment and adds it to the final gallery.
+
+The best part is the Malayalam trolling messages that appear with each captured photo. 😂
+
+The captured images can also be downloaded individually or combined into a session video.
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
-
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+- **Languages:** TypeScript, JavaScript, HTML, CSS
+- **Frameworks:** React 19
+- **Libraries:** MediaPipe Tasks Vision, Tailwind CSS
+- **Tools:** Vite, npm, Git, GitHub, Vercel
+- **Browser APIs:** MediaDevices/WebRTC, Canvas, MediaRecorder, Web Audio, Session Storage
 
 ### Implementation
 For Software:
 # Installation
-[commands]
-
+```bash
+git clone https://github.com/Aurenox/hamster-therapy.git
+cd hamster-therapy/hamster-therapy
+npm install
+```
 # Run
-[commands]
-
+```bash
+npm run dev
+```
 ### Project Documentation
 For Software:
 
-# Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+# Screenshots
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+![Home Page](screenshots/home-page.png)
+*Hamster Therapy home screen where the user begins the facial-expression therapy experience.*
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+![Therapy Stage](screenshots/therapy-stage-1-yawn.png)
+*Stage 1 — The Yawn, where the application detects the user's facial expression in real time.*
+
+![Sleep Countdown](screenshots/therapy-complete-countdown.png)
+*The sleep countdown shown after completing the four therapy stages.*
+
+![Results Gallery](screenshots/results-gallery.png)
+*The results gallery showing captured frames along with humorous Malayalam trolling messages and individual download options.*
+
+![Session Video](screenshots/session-video.png)
+*The session video section where the captured frames can be combined into a video and downloaded.*
 
 # Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
+![Workflow](dataflow/diagram.png)
 
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
+**The workflow shows how Hamster Therapy starts with webcam access and face detection, guides the user through four facial-expression therapy stages, captures each frame, checks for a hidden reaction, and displays the final images with Malayalam trolling messages. If a reaction is detected, a fifth frame is added; otherwise, the session contains four frames. Users can download individual images or create and download a session video.**
 
 ### Project Demo
 # Video
