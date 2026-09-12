@@ -101,12 +101,10 @@ For Software:
 *Explain what the video demonstrates*
 
 # Additional Demos
-[Add any extra demo materials/links]
+[link](https://drive.google.com/drive/folders/11_Jve1nhdrHCKj3WU795u7fZug6nmeYY?usp=sharing)
 
 ## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- SAURAV B : Designed and developed the complete Hamster Therapy project, including the React/TypeScript interface, MediaPipe facial-expression detection, four therapy stages, webcam frame capture, hidden reaction detection, Malayalam trolling gallery, image downloads, session video generation, audio effects, testing, debugging, GitHub setup, and Vercel deployment.
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
